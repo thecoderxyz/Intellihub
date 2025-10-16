@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliHub AI Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-icon { width: 1.5rem; height: 1.5rem; }
+        .nav-link.active { background-color: #374151; }
+        .output-content { white-space: pre-wrap; line-height: 1.7; font-family: 'Inter', sans-serif; }
+        .code-output { font-family: 'Courier New', Courier, monospace; white-space: pre-wrap; }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top: 4px solid #ffffff;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Simple transition for view switching */
+        .view { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 antialiased">
+
+    <div class="flex h-screen bg-gray-900">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-gray-800/50 border-r border-gray-700/50 flex flex-col">
+            <div class="p-6 text-center border-b border-gray-700/50">
+                <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-teal-400">IntelliHub AI</h1>
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors duration-200" data-view="dashboard">
+                    <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors duration-200" data-view="study">
+                     <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Study Buddy</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors duration-200" data-view="text">
+                    <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    <span>Text Tools</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors duration-200" data-view="code">
+                    <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    <span>Code Helper</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors duration-200" data-view="creative">
+                    <svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.17l-3.5-3.5 1.41-1.41L11 13.34l4.59-4.59L17 10.17l-6 6z" fill-opacity="0" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c.621.206 1.275.206 1.896 0M9.75 3.104C8.75 4.094 8 5.484 8 7c0 1.516.75 2.906 1.75 3.896m4.5-3.896c1-1.25.75-3-1.5-3C11.25 4 10.5 5.25 10.5 7c0 1.516.75 2.906 1.75 3.896m-4.5 0c-.09.023-.18.042-.27.058a2.25 2.25 0 01-1.591-.659L5 11.5m0 0l-2.25 2.25a2.25 2.25 0 000 3.182l2.25 2.25a2.25 2.25 0 003.182 0l2.25-2.25m-6.364 0l2.25-2.25m0 0l2.25 2.25m2.25-2.25l2.25-2.25m0 0l2.25 2.25m-2.25-2.25l-2.25 2.25m-6.364 0l-2.25 2.25"/></svg>
+                    <span>Creative Corner</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors duration-200" data-view="travel">
+                     <svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0"><g fill="currentColor"><path d="M12.3,13.23a1,1,0,0,0-1.1,0L6.4,16.42a1,1,0,0,0-.4,1.5l7.1,9a1,1,0,0,0,1.6-.2l4.8-11.3a1,1,0,0,0-.5-1.3Z" fill-opacity="0" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12H3"/></g></svg>
+                    <span>Travel Planner</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors duration-200" data-view="image">
+                    <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>Image Generator</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+            
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view">
+                <h2 class="text-4xl font-extrabold text-white mb-2">Welcome to IntelliHub AI</h2>
+                <p class="text-lg text-gray-400 mb-8">Your integrated AI-powered workspace.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                        <h3 class="font-bold text-xl text-blue-400 mb-2">Learn Faster</h3>
+                        <p class="text-gray-400">Use the <a href="#" class="font-semibold text-blue-400 hover:underline" onclick="switchView('study')">Study Buddy</a> to explain topics, generate questions, and create quizzes.</p>
+                    </div>
+                    <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                        <h3 class="font-bold text-xl text-teal-400 mb-2">Create & Refine</h3>
+                        <p class="text-gray-400">Use <a href="#" class="font-semibold text-teal-400 hover:underline" onclick="switchView('text')">Text Tools</a> to summarize articles or draft professional emails in seconds.</p>
+                    </div>
+                    <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                        <h3 class="font-bold text-xl text-purple-400 mb-2">Build & Understand</h3>
+                        <p class="text-gray-400">Let the <a href="#" class="font-semibold text-purple-400 hover:underline" onclick="switchView('code')">Code Helper</a> explain complex code or write new scripts for you.</p>
+                    </div>
+                    <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                        <h3 class="font-bold text-xl text-pink-400 mb-2">Visualize Ideas</h3>
+                        <p class="text-gray-400">Bring your concepts to life with the <a href="#" class="font-semibold text-pink-400 hover:underline" onclick="switchView('image')">Image Generator</a>.</p>
+                    </div>
+                     <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                        <h3 class="font-bold text-xl text-orange-400 mb-2">Plan Adventures</h3>
+                        <p class="text-gray-400">Get a custom itinerary for your next trip with the <a href="#" class="font-semibold text-orange-400 hover:underline" onclick="switchView('travel')">Travel Planner</a>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Buddy View -->
+            <div id="study-view" class="view hidden">
+                <h2 class="text-3xl font-bold mb-6">Study Buddy</h2>
+                <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <input type="text" id="study-subject" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Subject (e.g., Biology)">
+                        <input type="text" id="study-topic" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Topic (e.g., Cell Mitosis)">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <button onclick="handleStudyAction('explain')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all">Explain Topic</button>
+                        <button onclick="handleStudyAction('questions')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-lg transition-all">Practice Questions</button>
+                        <button onclick="handleStudyAction('mcqs')" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-all">Generate MCQs</button>
+                        <button onclick="handleStudyAction('lessonPlan')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-all">✨ Create Lesson Plan</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Tools View -->
+            <div id="text-view" class="view hidden">
+                <h2 class="text-3xl font-bold mb-6">Text Tools</h2>
+                <!-- Summarizer -->
+                <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50 mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-400">Summarizer</h3>
+                    <textarea id="text-summarize-input" rows="6" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="Paste text here to summarize..."></textarea>
+                    <button onclick="handleTextAction('summarize')" class="mt-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded-lg">Summarize</button>
+                </div>
+                <!-- Email Writer -->
+                <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50 mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-400">Email Writer</h3>
+                    <input type="text" id="text-email-to" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg mb-4" placeholder="To / Topic (e.g., Project Update)">
+                    <textarea id="text-email-points" rows="4" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg" placeholder="Key points to include (one per line)..."></textarea>
+                    <button onclick="handleTextAction('email')" class="mt-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded-lg">Draft Email</button>
+                </div>
+                 <!-- Tone Shifter -->
+                <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-400">✨ Tone Shifter</h3>
+                    <textarea id="text-tone-input" rows="6" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg" placeholder="Paste text here to change its tone..."></textarea>
+                    <div class="flex items-center gap-4 mt-4">
+                        <select id="text-tone-select" class="bg-gray-900 border border-gray-600 rounded-lg p-2.5">
+                            <option value="Formal">Formal</option>
+                            <option value="Casual">Casual</option>
+                            <option value="Confident">Confident</option>
+                            <option value="Friendly">Friendly</option>
+                            <option value="Persuasive">Persuasive</option>
+                        </select>
+                        <button onclick="handleTextAction('toneShift')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded-lg flex-1">Shift Tone</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Helper View -->
+            <div id="code-view" class="view hidden">
+                <h2 class="text-3xl font-bold mb-6">Code Helper</h2>
+                <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                     <textarea id="code-input" rows="8" class="w-full p-3 bg-gray-900 border font-mono text-sm border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="Paste code to explain, or describe the code you need..."></textarea>
+                     <button onclick="handleCodeAction()" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-5 rounded-lg">Analyze / Generate Code</button>
+                </div>
+            </div>
+            
+            <!-- Creative Corner View -->
+            <div id="creative-view" class="view hidden">
+                <h2 class="text-3xl font-bold mb-6">Creative Corner</h2>
+                <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                    <h3 class="text-xl font-semibold mb-4 text-pink-400">✨ Recipe Creator</h3>
+                    <p class="text-gray-400 mb-4">Have some ingredients but not sure what to make? List them below!</p>
+                    <textarea id="creative-recipe-input" rows="4" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500" placeholder="e.g., chicken breast, rice, broccoli, soy sauce"></textarea>
+                    <button onclick="handleCreativeAction('recipe')" class="mt-4 bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-5 rounded-lg">Generate Recipe</button>
+                </div>
+            </div>
+
+            <!-- Travel Planner View -->
+            <div id="travel-view" class="view hidden">
+                <h2 class="text-3xl font-bold mb-6">Travel Planner</h2>
+                <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <input type="text" id="travel-destination" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500" placeholder="Destination (e.g., Paris, France)">
+                        <input type="text" id="travel-duration" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500" placeholder="Duration (e.g., 5 days)">
+                    </div>
+                    <textarea id="travel-interests" rows="3" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500" placeholder="Interests (e.g., museums, local food, hiking)"></textarea>
+                    <button onclick="handleTravelAction()" class="mt-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-5 rounded-lg">✨ Generate Itinerary</button>
+                </div>
+            </div>
+            
+            <!-- Image Generator View -->
+            <div id="image-view" class="view hidden">
+                <h2 class="text-3xl font-bold mb-6">Image Generator</h2>
+                <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                    <div class="flex gap-4">
+                        <input type="text" id="image-prompt" class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500" placeholder="Describe the image you want to create...">
+                        <button onclick="generateImage()" class="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-6 rounded-lg">Generate</button>
+                    </div>
+                </div>
+                 <!-- Image Output -->
+                <div id="image-output-container" class="mt-6 hidden">
+                    <div class="flex justify-center items-center bg-gray-800/50 rounded-lg p-4 min-h-[300px]">
+                        <img id="generated-image" class="max-w-full max-h-[512px] rounded-md" src="" alt="Generated Image">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Universal Output/Loading Area -->
+            <div id="loading-state" class="mt-6 text-center hidden">
+                <div class="spinner inline-block"></div>
+                <p class="mt-2 text-gray-400">AI is processing your request...</p>
+            </div>
+            <div id="error-message" class="mt-6 text-center text-red-400 font-medium hidden"></div>
+            <div id="output-container" class="mt-6 hidden">
+                <div class="bg-gray-800/60 p-6 rounded-xl border border-gray-700/50">
+                    <h3 id="output-title" class="text-xl font-semibold mb-4 text-gray-200"></h3>
+                    <div id="output-content" class="output-content text-gray-300"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+    // --- Core Platform Logic ---
+    const navLinks = document.querySelectorAll('.nav-link');
+    const views = document.querySelectorAll('.view');
+    const loadingState = document.getElementById('loading-state');
+    const errorMessage = document.getElementById('error-message');
+    const outputContainer = document.getElementById('output-container');
+    const outputTitle = document.getElementById('output-title');
+    const outputContent = document.getElementById('output-content');
+    
+    // --- API Configuration ---
+    const TEXT_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=`;
+    const IMAGE_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=`;
+
+    function switchView(viewName) {
+        views.forEach(view => view.classList.add('hidden'));
+        document.getElementById(`${viewName}-view`).classList.remove('hidden');
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.dataset.view === viewName) {
+                link.classList.add('active');
+            }
+        });
+        clearAllOutputs();
+    }
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView(link.dataset.view);
+        });
+    });
+
+    // Initialize to dashboard view
+    document.addEventListener('DOMContentLoaded', () => switchView('dashboard'));
+    
+    // --- Generic Helper Functions ---
+    function setLoading(isLoading) {
+        clearAllOutputs();
+        loadingState.classList.toggle('hidden', !isLoading);
+    }
+    
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.remove('hidden');
+    }
+
+    function clearAllOutputs() {
+        errorMessage.classList.add('hidden');
+        outputContainer.classList.add('hidden');
+        document.getElementById('image-output-container').classList.add('hidden');
+        outputContent.innerHTML = '';
+        outputTitle.textContent = '';
+    }
+    
+    // --- Generic API Caller for Text Generation ---
+    async function callTextAPI(systemPrompt, userPrompt, outputTitleText) {
+        setLoading(true);
+        try {
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+            const response = await fetch(TEXT_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            
+            if (!response.ok) {
+                 throw new Error(result.error?.message || "An API error occurred.");
+            }
+            
+            const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (generatedText) {
+                outputTitle.textContent = outputTitleText;
+                outputContent.textContent = generatedText;
+                outputContainer.classList.remove('hidden');
+            } else {
+                showError("The AI returned an empty response.");
+            }
+        } catch (error) {
+            showError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // --- Study Buddy Logic ---
+    function handleStudyAction(action) {
+        const subject = document.getElementById('study-subject').value.trim();
+        const topic = document.getElementById('study-topic').value.trim();
+        if (!subject || !topic) {
+            showError("Please enter both subject and topic.");
+            return;
+        }
+
+        const prompts = {
+            explain: "You are an expert teacher. Clearly explain the topic in a concise way.",
+            questions: "You are an exam creator. Generate 5 short-answer practice questions.",
+            mcqs: "You are a test creator. Generate 5 MCQs with 4 options each, and provide an answer key at the end.",
+            lessonPlan: "You are an expert curriculum designer. Create a structured lesson plan for the topic. Include learning objectives, key concepts, sub-topics, and suggested activities for a student."
+        };
+        const titles = {
+            explain: `Explanation for ${topic}`,
+            questions: `Practice Questions for ${topic}`,
+            mcqs: `MCQs for ${topic}`,
+            lessonPlan: `Lesson Plan for ${topic}`
+        };
+
+        const userPrompt = `Subject: ${subject}\nTopic: ${topic}`;
+        callTextAPI(prompts[action], userPrompt, titles[action]);
+    }
+
+    // --- Text Tools Logic ---
+    function handleTextAction(action) {
+        let userPrompt, systemPrompt, title;
+        if (action === 'summarize') {
+            const textToSummarize = document.getElementById('text-summarize-input').value.trim();
+            if (!textToSummarize) { showError("Please enter text to summarize."); return; }
+            userPrompt = textToSummarize;
+            systemPrompt = "Summarize the following text into key bullet points.";
+            title = "Summary";
+        } else if (action === 'email') {
+            const to = document.getElementById('text-email-to').value.trim();
+            const points = document.getElementById('text-email-points').value.trim();
+            if (!to || !points) { showError("Please provide recipient/topic and key points."); return; }
+            userPrompt = `Recipient/Topic: ${to}\nKey Points:\n${points}`;
+            systemPrompt = "You are a professional assistant. Write a clear and concise email based on the provided topic and key points.";
+            title = `Draft Email: ${to}`;
+        } else if (action === 'toneShift') {
+            const textToShift = document.getElementById('text-tone-input').value.trim();
+            const tone = document.getElementById('text-tone-select').value;
+            if (!textToShift) { showError("Please enter text to shift its tone."); return; }
+            userPrompt = `Tone: ${tone}\n\nText:\n${textToShift}`;
+            systemPrompt = "You are an expert editor. Rewrite the following text in the specified tone, while preserving the core meaning.";
+            title = `Text rewritten in a ${tone} tone`;
+        }
+        callTextAPI(systemPrompt, userPrompt, title);
+    }
+
+    // --- Code Helper Logic ---
+    function handleCodeAction() {
+        const input = document.getElementById('code-input').value.trim();
+        if (!input) { showError("Please enter code or a description."); return; }
+        const systemPrompt = "You are an expert programmer. Explain the provided code clearly, or generate code based on the user's description. Use markdown for code blocks.";
+        callTextAPI(systemPrompt, input, "Code Analysis / Generation");
+    }
+
+    // --- Creative Corner Logic ---
+    function handleCreativeAction(action) {
+        if (action === 'recipe') {
+            const ingredients = document.getElementById('creative-recipe-input').value.trim();
+            if (!ingredients) { showError("Please list some ingredients."); return; }
+            const systemPrompt = "You are a creative chef. Based on the ingredients provided, create a simple and delicious recipe. Include a catchy title, an ingredients list, and step-by-step instructions.";
+            const userPrompt = `Ingredients: ${ingredients}`;
+            const title = "Your Custom Recipe";
+            callTextAPI(systemPrompt, userPrompt, title);
+        }
+    }
+
+    // --- Travel Planner Logic ---
+    function handleTravelAction() {
+        const destination = document.getElementById('travel-destination').value.trim();
+        const duration = document.getElementById('travel-duration').value.trim();
+        const interests = document.getElementById('travel-interests').value.trim();
+        if (!destination || !duration) { showError("Please provide a destination and duration."); return; }
+        
+        const systemPrompt = "You are an expert travel agent. Create a detailed, day-by-day itinerary based on the user's request. Include suggestions for activities, sights, and local cuisine. Make it engaging and practical.";
+        const userPrompt = `Destination: ${destination}\nDuration: ${duration}\nInterests: ${interests || 'General sightseeing'}`;
+        const title = `Your Itinerary for ${destination}`;
+        callTextAPI(systemPrompt, userPrompt, title);
+    }
+
+    // --- Image Generator Logic ---
+    async function generateImage() {
+        const prompt = document.getElementById('image-prompt').value.trim();
+        if (!prompt) { showError("Please describe the image you want."); return; }
+        
+        setLoading(true);
+        const imageOutputContainer = document.getElementById('image-output-container');
+        const generatedImage = document.getElementById('generated-image');
+        
+        try {
+            const payload = { instances: [{ prompt: prompt }] };
+            const response = await fetch(IMAGE_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.error?.message || "An API error occurred during image generation.");
+            }
+            
+            const base64Data = result.predictions?.[0]?.bytesBase64Encoded;
+            if (base64Data) {
+                generatedImage.src = `data:image/png;base64,${base64Data}`;
+                imageOutputContainer.classList.remove('hidden');
+            } else {
+                showError("The AI did not return an image. Try a different prompt.");
+            }
+        } catch (error) {
+            showError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+</script>
+</body>
+</html>
+
