@@ -1,7 +1,7 @@
 <div align="center">
 
   <br />
-  <img src="https://raw.githubusercontent.com/gist/thecoderxyz/9f1c713303d3248354c59a3f2b48d2c6/raw/4c0f16f318355a22987a2293b6e8a4a081519782/intlogo" alt="Intellihub Logo" width="150">
+  <img src="https://raw.githubusercontent.com/gist/thecoderxyz/acc9841a3588a7c89e8351fd436e64e25ad1b090" alt="Intellihub Logo" width="150">
   <br />
 
   # **IntelliHub AI Platform**
