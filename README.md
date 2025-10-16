@@ -49,8 +49,6 @@ IntelliHub provides a suite of powerful, AI-driven tools designed for various ta
 | **Travel Planner** |  ✈️  | Creates detailed travel itineraries on demand.          |
 | **Image Generator** |  🖼️  | Creates stunning visuals from text prompts using DALL-E 3. |
 
-![IntelliHub Dashboard Screenshot](https://via.placeholder.com/800x400.png?text=Showcase+Your+App+Here!)
-*<p align="center">(Replace the link above with a real screenshot of your project!)</p>*
 
 ---
 
