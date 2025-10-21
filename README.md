@@ -1,9 +1,5 @@
 <div align="center">
 
-  <br />
-  <img src="attached_assets/intlogo.jpg" alt="Intellihub Logo" width="150">
-  <br />
-
   # **IntelliHub AI Platform**
 
   ### _A Unified Workspace with Specialized AI Tools_
@@ -12,7 +8,11 @@
     An AI-powered productivity platform integrating six core tools—Study Buddy, Text Tools, Code Helper, Creative Corner, Travel Planner, and Image Generator—into one seamless experience.
   </p>
 
-<p>
+<p> 
+
+    <br />
+  <img src="attached_assets/intlogo.jpg" alt="Intellihub Logo" width="150">
+  <br />
   <a href="https://github.com/thecoderxyz/Intellihub/graphs/contributors">
     <img src="https://img.shields.io/github/contributors/thecoderxyz/Intellihub?color=blue" alt="contributors" />
   </a>
